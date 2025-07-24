@@ -129,7 +129,7 @@ add_action('wp_ajax_quick_exif_extract', function () {
 });
 
 // Shortcode to display EXIF info on front-end
-add_shortcode('quick_exif', function () {
+add_shortcode('quick-exif', function () {
     if (!is_singular('post')) return '';
 
     $post_id = get_the_ID();
