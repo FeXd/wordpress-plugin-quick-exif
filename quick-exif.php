@@ -36,7 +36,29 @@ function quick_exif_meta_box_render($post) {
 
             $camera = trim(($exif['Make'] ?? '') . ' ' . ($exif['Model'] ?? ''));
             $lens = $exif['UndefinedTag:0xA434'] ?? '';
-            $exposure = trim(($exif['ExposureTime'] ?? '') . ' ' . ($exif['FNumber'] ?? '') . ' ' . ($exif['ISOSpeedRatings'] ?? 'ISO N/A'));
+
+            if ($camera && $lens) {
+                $camera = "$camera, $lens";
+            } elseif ($lens) {
+                $camera = $lens;
+            }
+
+            $exposure_time = $exif['ExposureTime'] ?? '';
+            $shutter = $exposure_time ? $exposure_time . 'sec' : '';
+
+            $f_number = isset($exif['FNumber']) ? 'f/' . round(eval('return ' . $exif['FNumber'] . ';'), 1) : '';
+            $iso = isset($exif['ISOSpeedRatings']) ? 'ISO ' . $exif['ISOSpeedRatings'] : '';
+
+            $focal_length = '';
+            if (isset($exif['FocalLength'])) {
+                $parts = explode('/', $exif['FocalLength']);
+                if (count($parts) === 2 && is_numeric($parts[0]) && is_numeric($parts[1]) && $parts[1] != 0) {
+                    $focal_length = round($parts[0] / $parts[1], 1) . 'mm';
+                }
+            }
+
+            $exposure_parts = array_filter([$f_number, $shutter, $iso, $focal_length]);
+            $exposure = implode(', ', $exposure_parts);
 
             $location = '';
             if (!empty($exif['GPSLatitude']) && !empty($exif['GPSLongitude'])) {
@@ -52,7 +74,7 @@ function quick_exif_meta_box_render($post) {
             }
 
             // Save to custom fields
-            update_post_meta($post->ID, 'camera', trim("{$camera} {$lens}"));
+            update_post_meta($post->ID, 'camera', trim($camera));
             update_post_meta($post->ID, 'exposure', $exposure);
             update_post_meta($post->ID, 'location', $location ?: 'N/A');
             update_post_meta($post->ID, 'date', $date ?: 'N/A');
