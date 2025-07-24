@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Quick Exif
  * Description: Adds a button to the post editor to extract EXIF data from the featured image.
- * Version: 0.3
+ * Version: 0.4
  * Author: Arlin Schaffel
  */
 
@@ -25,7 +25,7 @@ function quick_exif_meta_box_render($post) {
     $is_saved = ($post->ID && $post->post_status !== 'auto-draft');
     $has_thumb = has_post_thumbnail($post->ID);
 
-    echo '<p><button id="quick-exif-test-button" class="button button-primary">Show EXIF</button></p>';
+    echo '<p><button id="quick-exif-test-button" class="button button-primary">Extract EXIF</button></p>';
 
     if ($is_saved && $has_thumb) {
         $thumb_id = get_post_thumbnail_id($post->ID);
@@ -51,14 +51,11 @@ function quick_exif_meta_box_render($post) {
                 $date = date('Y-m-d', strtotime($date));
             }
 
-            $exif_data = [
-                'Camera' => trim("{$camera} {$lens}"),
-                'Exposure' => $exposure,
-                'Location' => $location ?: 'N/A',
-                'Date' => $date ?: 'N/A'
-            ];
-
-            $json = json_encode($exif_data, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
+            // Save to custom fields
+            update_post_meta($post->ID, 'camera', trim("{$camera} {$lens}"));
+            update_post_meta($post->ID, 'exposure', $exposure);
+            update_post_meta($post->ID, 'location', $location ?: 'N/A');
+            update_post_meta($post->ID, 'date', $date ?: 'N/A');
 
             echo <<<HTML
             <script>
@@ -67,12 +64,8 @@ function quick_exif_meta_box_render($post) {
                     if (btn) {
                         btn.addEventListener('click', function (e) {
                             e.preventDefault();
-                            const exif = JSON.parse('$json');
-                            let message = '';
-                            for (let key in exif) {
-                                message += key + ': ' + exif[key] + '';
-                            }
-                            alert(message);
+                            alert('✅ EXIF data imported into custom fields. Reloading...');
+                            location.reload();
                         });
                     }
                 });
