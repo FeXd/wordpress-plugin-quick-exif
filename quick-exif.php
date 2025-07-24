@@ -5,6 +5,7 @@
  * Plugin URI: https://github.com/FeXd/wordpress-plugin-quick-exif
  * Description: A simple WordPress plugin to extract EXIF data from the featured image and save it as custom fields.
  * Version: 0.0.1
+ * Author: Arlin Schaffel
  * Author URI: https://github.com/FeXd
  * License: MIT
  * License URI: https://github.com/FeXd/wordpress-plugin-quick-exif/blob/main/LICENSE
