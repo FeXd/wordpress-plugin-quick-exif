@@ -34,7 +34,8 @@ add_action('admin_enqueue_scripts', function ($hook) {
 
 // Render meta box with button
 function quick_exif_meta_box_render($post) {
-    echo '<p><button id="quick-exif-test-button" class="button button-primary">Extract EXIF</button></p>';
+    echo '<p>Attempt to extract <strong>EXIF data</strong> from <strong>featured image</strong> then create and populate <strong>custom fields</strong> with appropriate data.</p>';
+    echo '<p><button id="quick-exif-test-button" class="button button-primary">Extract EXIF from Featured Image</button></p>';
     echo '<p id="quick-exif-status"></p>';
 }
 
@@ -111,9 +112,16 @@ add_shortcode('quick_exif', function () {
     $camera = get_post_meta($post_id, 'camera', true) ?: 'N/A';
     $exposure = get_post_meta($post_id, 'exposure', true) ?: 'N/A';
     $location = get_post_meta($post_id, 'location', true) ?: 'N/A';
-    $date = get_post_meta($post_id, 'date', true) ?: 'N/A';
+    $date_raw = get_post_meta($post_id, 'date', true);
+    if ($date_raw) {
+        $timestamp = strtotime($date_raw);
+        $date = $timestamp ? date('F j, Y', $timestamp) : 'N/A';
+    } else {
+        $date = 'N/A';
+    }
 
-    return "<p>
+    return "<h3>Photo Information</h3>
+    <p>
         <strong>Camera:</strong> {$camera}<br>
         <strong>Exposure:</strong> {$exposure}<br>
         <strong>Location:</strong> {$location}<br>
