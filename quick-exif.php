@@ -1,8 +1,8 @@
 <?php
 /**
- * Plugin Name: Quick Exif
+ * Plugin Name: Quick EXIF
  * Plugin URI: https://github.com/FeXd/wordpress-plugin-quick-exif
- * Description: A simple WordPress plugin to help facilitate posting to my photography blog at https://arlin.photography.
+ * Description: A simple WordPress plugin to facilitate adding featured image EXIF data to posts.
  * Version: 0.0.1
  * Author URI: https://github.com/FeXd
  * License: MIT
