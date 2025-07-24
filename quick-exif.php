@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: Quick Exif
+ * Plugin Name: Quick EXIF
  * Description: Adds a button to the post editor to extract EXIF data from the featured image.
  * Version: 0.5
  * Author: Arlin Schaffel
@@ -16,7 +16,7 @@ add_action('add_meta_boxes', function () {
         'quick_exif_meta_box_render',
         'post',
         'normal',
-        'default'
+        'high'
     );
 });
 
@@ -34,7 +34,8 @@ add_action('admin_enqueue_scripts', function ($hook) {
 
 // Render meta box with button
 function quick_exif_meta_box_render($post) {
-    echo '<p>Attempt to extract <strong>EXIF data</strong> from <strong>featured image</strong> then create and populate <strong>custom fields</strong> with appropriate data.</p>';
+    echo '<p><strong>WARNING: </strong> If successful, this will <strong>reload</strong> the page.</p>';
+    echo '<p>Attempt to extract <strong>EXIF data</strong> from <strong>featured image</strong> then create and populate <strong>custom fields</strong> with appropriate data. Post must have a <strong>featured image</strong> and be <strong>saved</strong> in order to work.';
     echo '<p><button id="quick-exif-test-button" class="button button-primary">Extract EXIF from Featured Image</button></p>';
     echo '<p id="quick-exif-status"></p>';
 }
@@ -45,18 +46,20 @@ add_action('wp_ajax_quick_exif_extract', function () {
 
     $post_id = intval($_POST['postId'] ?? 0);
     if (!$post_id || !current_user_can('edit_post', $post_id)) {
-        wp_send_json_error('Invalid post.');
+        wp_send_json_error('Invalid post. Be sure to save post.');
     }
 
     $thumb_id = get_post_thumbnail_id($post_id);
     $image_path = get_attached_file($thumb_id);
 
     if (!file_exists($image_path)) {
-        wp_send_json_error('Image not found.');
+        wp_send_json_error('Featured Image not found. Be sure to save post.');
     }
 
     $exif = @exif_read_data($image_path, 'IFD0');
-    if (!$exif) wp_send_json_error('No EXIF data found.');
+    if (!$exif) {
+        wp_send_json_error('No EXIF data found.');
+    }
 
     $camera = trim(($exif['Make'] ?? '') . ' ' . ($exif['Model'] ?? ''));
     $lens = $exif['UndefinedTag:0xA434'] ?? '';
