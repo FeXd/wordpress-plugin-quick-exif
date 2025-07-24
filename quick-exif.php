@@ -101,3 +101,22 @@ add_action('wp_ajax_quick_exif_extract', function () {
 
     wp_send_json_success('EXIF data saved.');
 });
+
+// Add shortcode to display EXIF custom fields
+add_shortcode('quick_exif', function () {
+    if (!is_singular('post')) return '';
+
+    $post_id = get_the_ID();
+
+    $camera = get_post_meta($post_id, 'camera', true) ?: 'N/A';
+    $exposure = get_post_meta($post_id, 'exposure', true) ?: 'N/A';
+    $location = get_post_meta($post_id, 'location', true) ?: 'N/A';
+    $date = get_post_meta($post_id, 'date', true) ?: 'N/A';
+
+    return "<p>
+        <strong>Camera:</strong> {$camera}<br>
+        <strong>Exposure:</strong> {$exposure}<br>
+        <strong>Location:</strong> {$location}<br>
+        <strong>Date:</strong> {$date}
+    </p>";
+});
