@@ -4,7 +4,7 @@
  * Plugin Name: Quick EXIF
  * Plugin URI: https://github.com/FeXd/wordpress-plugin-quick-exif
  * Description: A simple WordPress plugin to extract EXIF data from the featured image and save it as custom fields.
- * Version: 0.0.1
+ * Version: 0.0.2
  * Author: Arlin Schaffel
  * Author URI: https://github.com/FeXd
  * License: MIT
@@ -147,11 +147,13 @@ add_shortcode('quick-exif', function () {
     }
 
     // Display the EXIF info
-    return "<h3>Photo Information</h3>
+    return "<div class='is-layout-constrained'>
+    <h3>Photo Information</h3>
     <p>
         <strong>Camera:</strong> {$camera}<br>
         <strong>Exposure:</strong> {$exposure}<br>
         <strong>Location:</strong> {$location}<br>
         <strong>Date:</strong> {$date}
-    </p>";
+    </p>
+    </div>";
 });
